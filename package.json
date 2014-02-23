@@ -1,0 +1,32 @@
+{
+  "name": "ftp-diff-deployer",
+  "version": "0.1.0",
+  "description": "Incremetally push to your FTP server. `ftp-diff-deployer` has a special integration with git, but can work everywhere.",
+  "main": "index.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/95ulisse/ftp-diff-deployer"
+  },
+  "keywords": [
+    "ftp",
+    "diff",
+    "deployer",
+    "git",
+    "incremental",
+    "push",
+    "publish",
+    "release"
+  ],
+  "author": "Marco Cameriero",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/95ulisse/ftp-diff-deployer/issues"
+  },
+  "homepage": "https://github.com/95ulisse/ftp-diff-deployer",
+  "dependencies": {
+    "coffee-script": "~1.7.1"
+  }
+}
