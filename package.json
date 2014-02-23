@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/95ulisse/ftp-diff-deployer",
   "dependencies": {
-    "coffee-script": "~1.7.1"
+    "coffee-script": "~1.7.1",
+    "iconv-lite": "~0.2.11"
   }
 }
