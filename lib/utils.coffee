@@ -1,5 +1,6 @@
 path = require 'path'
 fs = require 'fs'
+crypto = require 'crypto'
 iconv = require 'iconv-lite'
 
 utils = module.exports
@@ -82,6 +83,12 @@ utils.file =
 		for filename in fs.readdirSync(abspath)
 			filepath = path.join abspath, filename
 			if fs.statSync(filepath).isDirectory()
-				recurse rootdir, callback, unixifyPath(path.join(subdir || '', filename || ''))
+				utils.file.recurse rootdir, callback, unixifyPath(path.join(subdir || '', filename || ''))
 			else
 				callback unixifyPath(filepath), rootdir, subdir, filename
+
+
+	hash: (path) ->
+		hash = crypto.createHash 'sha1'
+		hash.update utils.file.read(path)
+		hash.digest 'hex'
