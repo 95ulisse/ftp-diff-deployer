@@ -17,7 +17,7 @@ newSimpleDiff = (fs, options) ->
 	Utils = utils.require 'utils'
 	if fs
 		Utils.__set__ 'fs', fs
-	SimpleDiff = utils.require 'SimpleDiff'
+	SimpleDiff = utils.require 'diff/SimpleDiff'
 	SimpleDiff.__set__ 'utils', Utils
 	return new SimpleDiff options || { src: root + 'www', memory: root + 'memory' }
 

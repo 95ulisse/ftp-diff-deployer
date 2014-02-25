@@ -1,6 +1,6 @@
 path = require 'path'
 fs = require 'fs'
-utils = require './utils'
+utils = require '../utils'
 
 module.exports = class SimpleDiff
 
@@ -54,5 +54,5 @@ module.exports = class SimpleDiff
 		utils.file.write @options.memory, JSON.stringify tree
 
 		# Calls the callback with the computed diff
-		done diff
+		done null, diff
 		return true

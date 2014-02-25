@@ -92,3 +92,16 @@ utils.file =
 		hash = crypto.createHash 'sha1'
 		hash.update utils.file.read(path)
 		hash.digest 'hex'
+
+
+utils.wrapError = (message, data, e) ->
+	if not e?
+		e = data
+		data = null
+	err = new Error message
+	err.data = data if data
+	err.inner = e
+	return err
+
+utils.inspect = (obj) ->
+	nodeUtil.inspect obj, depth: null, colors: true

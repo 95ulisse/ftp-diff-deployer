@@ -28,7 +28,11 @@
   "homepage": "https://github.com/95ulisse/ftp-diff-deployer",
   "dependencies": {
     "coffee-script": "~1.7.1",
-    "iconv-lite": "~0.2.11"
+    "iconv-lite": "~0.2.11",
+    "jsftp": "~1.2.1",
+    "async": "~0.2.10",
+    "colors": "~0.6.2",
+    "lodash": "~2.4.1"
   },
   "devDependencies": {
     "rewire": "~2.0.0",
