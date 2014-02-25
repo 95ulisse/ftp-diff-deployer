@@ -32,6 +32,7 @@ module.exports = class DiffDeployer
 		# Useful references
 		auth = @options.auth
 		reporter = @options.reporter
+		diffComputer = @options.diff
 		src = @options.src
 		dest = @options.dest
 		retry = @options.retry
@@ -55,9 +56,9 @@ module.exports = class DiffDeployer
 						callback null
 
 			# Computes diff
-			(callback) =>
+			(callback) ->
 				reporter.diffStarted()
-				@options.diff.compute (e, diff) ->
+				diffComputer.compute (e, diff) ->
 					if e
 						callback utils.wrapError 'Diff computation failed', e
 					else
@@ -70,7 +71,7 @@ module.exports = class DiffDeployer
 
 				# List of dirs to create
 				dirs = []
-				allFiles = diff.new.concat diff.modified
+				allFiles = _.keys(diff.new).concat _.keys(diff.modified)
 				for f in allFiles
 					f = normalizeFtpPath Path.join dest, Path.dirname f
 					f.split('/').reduce (a, b) ->
@@ -106,9 +107,10 @@ module.exports = class DiffDeployer
 			# Uploads new and modified files
 			(diff, callback) ->
 
-				async.eachSeries diff.new.concat(diff.modified), ((file, cb) ->
+				async.eachSeries _.keys(diff.new).concat(_.keys(diff.modified)), ((file, cb) ->
 
 					# Full source and destination path
+					hash = diff.new[file] || diff.modified[file]
 					fullSrc = Path.join src, file
 					fullDest = normalizeFtpPath Path.join dest, file
 
@@ -124,6 +126,7 @@ module.exports = class DiffDeployer
 									reporter.newAttempt retry
 									func retry
 							else
+								diffComputer.fileUploaded file, hash
 								reporter.uploadFinished()
 								cb null
 					func retry
@@ -138,7 +141,7 @@ module.exports = class DiffDeployer
 			# Deletes files
 			(diff, callback) ->
 
-				async.eachSeries diff.removed, ((file, cb) ->
+				async.eachSeries _.keys(diff.removed), ((file, cb) ->
 
 					# Full destination path
 					fullDest = normalizeFtpPath Path.join dest, file
@@ -154,16 +157,12 @@ module.exports = class DiffDeployer
 									reporter.newAttempt retry
 									func retry
 							else
+								diffComputer.fileRemoved file
 								reporter.fileRemoved file
 								cb null
 					func retry
 
-				), ((e) ->
-					if e
-						callback e
-					else
-						callback null, diff
-				)
+				), callback
 
 		], (e) ->
 			reporter.error e if e

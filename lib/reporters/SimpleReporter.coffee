@@ -1,4 +1,5 @@
 os = require 'os'
+_ = require 'lodash'
 utils = require '../utils'
 require 'colors'
 
@@ -28,7 +29,7 @@ module.exports = class SimpleReporter
 		@ok "Diff started"
 
 	diffFinished: (diff) ->
-		@ok "Got diff: #{diff.new.length.toString().green} #{diff.modified.length.toString().cyan} #{diff.removed.length.toString().red}"
+		@ok "Got diff: #{_.keys(diff.new).length.toString().green} #{_.keys(diff.modified).length.toString().cyan} #{_.keys(diff.removed).length.toString().red}"
 
 	directoryCreated: (path) ->
 		@ok "Remote directory created: #{path.yellow}"

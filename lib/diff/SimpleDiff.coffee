@@ -1,5 +1,6 @@
 path = require 'path'
 fs = require 'fs'
+_ = require 'lodash'
 utils = require '../utils'
 
 module.exports = class SimpleDiff
@@ -15,11 +16,12 @@ module.exports = class SimpleDiff
 	compute: (done) ->
 
 		# Reads memory JSON if available
-		memory =
+		@memory =
 			if utils.file.exists @options.memory
 				JSON.parse utils.file.read @options.memory
 			else
 				{}
+		memory = _.cloneDeep @memory
 
 		# Traverses the source tree and build a tree of the source files
 		tree = {}
@@ -31,28 +33,35 @@ module.exports = class SimpleDiff
 
 		# Creates the diff by comparing the memory and the actual tree
 		diff =
-			new: []
-			modified: []
-			removed: []
+			new: {}
+			modified: {}
+			removed: {}
 		for dir, files of tree
 			if not memory[dir]
-				diff.new.push path.join dir, f for f of files
+				diff.new[path.join dir, f] = h for f, h of files
 			else
 				for f, h of files
 					if not memory[dir][f]
-						diff.new.push path.join dir, f
+						diff.new[path.join dir, f] = h
 					else if memory[dir][f] != h
-						diff.modified.push path.join dir, f
+						diff.modified[path.join dir, f] = h
 						delete memory[dir][f]
 					else
 						delete memory[dir][f]
 		for dir, files of memory # What's left are the removed files
-			for f of files
-				diff.removed.push path.join dir, f
-
-		# Saves back the tree as the new memory file
-		utils.file.write @options.memory, JSON.stringify tree
+			for f, h of files
+				diff.removed[path.join dir, f] = h
 
 		# Calls the callback with the computed diff
 		done null, diff
 		return true
+
+	fileUploaded: (f, hash) ->
+		(@memory[path.dirname(f)] ||= {})[path.basename(f)] = hash
+		utils.file.write @options.memory, JSON.stringify @memory
+
+	fileRemoved: (f) ->
+		dir = path.dirname f
+		delete @memory[dir]?[path.basename f]
+		delete @memory[dir] if @memory[dir]? and _.keys(@memory[dir]).length == 0
+		utils.file.write @options.memory, JSON.stringify @memory

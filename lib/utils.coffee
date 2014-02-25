@@ -2,6 +2,7 @@ path = require 'path'
 fs = require 'fs'
 crypto = require 'crypto'
 iconv = require 'iconv-lite'
+nodeUtil = require 'util'
 
 utils = module.exports
 
