@@ -25,7 +25,7 @@ module.exports = class DiffDeployer
 
 		# Defaults
 		options.reporter ||= new(require './reporters/NullReporter')
-		options.retry ||= 2
+		options.retry ||= 3
 
 	deploy: (done) ->
 
