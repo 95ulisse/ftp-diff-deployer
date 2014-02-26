@@ -1,12 +1,9 @@
 require('coffee-script/register');
 
-module.exports = {
-	DiffDeployer: require('./lib/DiffDeployer'),
-	diff: {
-		SimpleDiff: require('./lib/diff/SimpleDiff')
-	},
-	reporters: {
-		NullReporter: require('./lib/reporters/NullReporter'),
-		SimpleReporter: require('./lib/reporters/SimpleReporter')
-	}
-};
+var DiffDeployer = require('./lib/DiffDeployer');
+
+DiffDeployer.SimpleDiff = require('./lib/diff/SimpleDiff');
+DiffDeployer.NullReporter = require('./lib/reporters/NullReporter');
+DiffDeployer.SimpleReporter = require('./lib/reporters/SimpleReporter');
+
+module.exports = DiffDeployer;
