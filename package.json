@@ -32,7 +32,8 @@
     "jsftp": "~1.2.1",
     "async": "~0.2.10",
     "colors": "~0.6.2",
-    "lodash": "~2.4.1"
+    "lodash": "~2.4.1",
+    "minimatch": "~0.2.14"
   },
   "devDependencies": {
     "rewire": "~2.0.0",

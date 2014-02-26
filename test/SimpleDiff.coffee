@@ -160,3 +160,23 @@ describe 'SimpleDiff test', () ->
 			_.keys(diff.modified).should.eql [ '/modifiedFile', '/dir/modifiedFile' ]
 			_.keys(diff.removed).should.eql [ '/removedFile', '/dir/removedFile', '/removedDir/file1', '/removedDir/file2' ]
 			done()
+
+
+	it 'Ignores files if excluded', (done) ->
+		fs = newFS
+			'www': {
+				'emptyFile': ''
+				'modifiedFile': ''
+				'newFile': ''
+			}
+			'memory': JSON.stringify { '/': {
+				'removedFile': '123fakehash123'
+				'modifiedFile': '123fakehash123'
+			} }
+		diff = newSimpleDiff fs, { src: root + 'www', memory: root + 'memory', exclude: [ '*[Ff]ile' ] }
+		diff.compute (e, diff) ->
+			throw e if e
+			_.keys(diff.new).should.have.length(0);
+			_.keys(diff.modified).should.have.length(0);
+			_.keys(diff.removed).should.have.length(0);
+			done()

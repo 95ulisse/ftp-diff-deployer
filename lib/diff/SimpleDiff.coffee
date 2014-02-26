@@ -1,6 +1,7 @@
 path = require 'path'
 fs = require 'fs'
 _ = require 'lodash'
+minimatch = require 'minimatch'
 utils = require '../utils'
 
 module.exports = class SimpleDiff
@@ -12,6 +13,8 @@ module.exports = class SimpleDiff
 			throw new Error "'#{options.src}' do not exists"
 		if not options.memory
 			throw new Error "'memory' option is required"
+
+		options.exclude ||= []
 
 	compute: (done) ->
 
@@ -27,6 +30,9 @@ module.exports = class SimpleDiff
 		tree = {}
 		utils.file.recurse @options.src, (fullpath) =>
 			fullpath = path.normalize '/' + path.relative @options.src, fullpath
+			if @options.exclude?.length > 0
+				for pattern in @options.exclude
+					return if minimatch fullpath, pattern, matchBase: true
 			dir = tree[path.dirname fullpath] ||= {}
 			dir[path.basename fullpath] = utils.file.hash path.resolve @options.src, fullpath.slice(1)
 
