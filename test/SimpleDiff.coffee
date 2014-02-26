@@ -1,5 +1,6 @@
 utils = require('./testUtils')
 FS = require 'fs-mock'
+_ = require 'lodash'
 
 # Root for FS to make sure that the tests can run on both Windows and Linux
 win32 = process.platform is 'win32' 
@@ -43,13 +44,12 @@ describe 'SimpleDiff test', () ->
 		).should.throw()
 
 
-	it 'Updates memory file after diff computation', (done) ->
+	it 'Does not update memory file after diff computation', (done) ->
 		fs = newFS
 			'www/file': ''
 		diff = newSimpleDiff fs
 		diff.compute () ->
-			fs.existsSync(root + 'memory').should.be.ok
-			JSON.parse(fs.readFileSync(root + 'memory') + '').should.eql { '/': { 'file': 'da39a3ee5e6b4b0d3255bfef95601890afd80709' } }
+			fs.existsSync(root + 'memory').should.be.false
 			done()
 
 
@@ -58,10 +58,11 @@ describe 'SimpleDiff test', () ->
 			'www/file': 'contents'
 			'memory': JSON.stringify { '/': {} }
 		diff = newSimpleDiff fs
-		diff.compute (diff) ->
-			diff.new.should.eql [ '/file' ]
-			diff.modified.should.have.length 0
-			diff.removed.should.have.length 0
+		diff.compute (e, diff) ->
+			throw e if e
+			_.keys(diff.new).should.eql [ '/file' ]
+			_.keys(diff.modified).should.have.length 0
+			_.keys(diff.removed).should.have.length 0
 			done()
 
 
@@ -70,10 +71,11 @@ describe 'SimpleDiff test', () ->
 			'www/file': 'contents'
 			'memory': JSON.stringify { '/': { 'file': '123fakehash123' } }
 		diff = newSimpleDiff fs
-		diff.compute (diff) ->
-			diff.new.should.have.length 0
-			diff.modified.should.eql [ '/file' ]
-			diff.removed.should.have.length 0
+		diff.compute (e, diff) ->
+			throw e if e
+			_.keys(diff.new).should.have.length 0
+			_.keys(diff.modified).should.eql [ '/file' ]
+			_.keys(diff.removed).should.have.length 0
 			done()
 
 
@@ -82,10 +84,11 @@ describe 'SimpleDiff test', () ->
 			'www': {}
 			'memory': JSON.stringify { '/': { 'file': '123fakehash123' } }
 		diff = newSimpleDiff fs
-		diff.compute (diff) ->
-			diff.new.should.have.length 0
-			diff.modified.should.have.length 0
-			diff.removed.should.eql [ '/file' ]
+		diff.compute (e, diff) ->
+			throw e if e
+			_.keys(diff.new).should.have.length 0
+			_.keys(diff.modified).should.have.length 0
+			_.keys(diff.removed).should.eql [ '/file' ]
 			done()
 
 
@@ -94,10 +97,11 @@ describe 'SimpleDiff test', () ->
 			'www/file': ''
 			'memory': JSON.stringify { '/': { 'file': 'da39a3ee5e6b4b0d3255bfef95601890afd80709' } } # Actual SHA1 for empty string
 		diff = newSimpleDiff fs
-		diff.compute (diff) ->
-			diff.new.should.have.length 0
-			diff.modified.should.have.length 0
-			diff.removed.should.have.length 0
+		diff.compute (e, diff) ->
+			throw e if e
+			_.keys(diff.new).should.have.length 0
+			_.keys(diff.modified).should.have.length 0
+			_.keys(diff.removed).should.have.length 0
 			done()
 
 
@@ -114,10 +118,11 @@ describe 'SimpleDiff test', () ->
 				'modifiedFile': '123fakehash123'
 			} }
 		diff = newSimpleDiff fs
-		diff.compute (diff) ->
-			diff.new.should.eql [ '/newFile' ]
-			diff.modified.should.eql [ '/modifiedFile' ]
-			diff.removed.should.eql [ '/removedFile' ]
+		diff.compute (e, diff) ->
+			throw e if e
+			_.keys(diff.new).should.eql [ '/newFile' ]
+			_.keys(diff.modified).should.eql [ '/modifiedFile' ]
+			_.keys(diff.removed).should.eql [ '/removedFile' ]
 			done()
 
 
@@ -149,9 +154,9 @@ describe 'SimpleDiff test', () ->
 					'file2': ''
 			}
 		diff = newSimpleDiff fs
-		debugger
-		diff.compute (diff) ->
-			diff.new.should.eql [ '/newFile', '/dir/newFile', '/newDir/file1', '/newDir/file2' ]
-			diff.modified.should.eql [ '/modifiedFile', '/dir/modifiedFile' ]
-			diff.removed.should.eql [ '/removedFile', '/dir/removedFile', '/removedDir/file1', '/removedDir/file2' ]
+		diff.compute (e, diff) ->
+			throw e if e
+			_.keys(diff.new).should.eql [ '/newFile', '/dir/newFile', '/newDir/file1', '/newDir/file2' ]
+			_.keys(diff.modified).should.eql [ '/modifiedFile', '/dir/modifiedFile' ]
+			_.keys(diff.removed).should.eql [ '/removedFile', '/dir/removedFile', '/removedDir/file1', '/removedDir/file2' ]
 			done()
