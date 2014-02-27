@@ -85,14 +85,19 @@ module.exports = class DiffDeployer
 					# Issues an LS command to check if the directory exists
 					ftp.ls dir, (e, results) ->
 						# If an error is returned, the directory does not exist
-						if not e and results?.length? and results.length >= 0
+						if not e and results?.length? and results.length > 0
+							reporter.directoryExists dir
 							cb null # Directory already exists
 						else
 
 							#Creates the directory
 							ftp.raw.mkd dir, (e) ->
 								if e
-									cb utils.wrapError 'Error while creating directory ' + dir, e
+									if e.code == 550 # Error 550: File already exists
+										reporter.directoryExists dir
+										cb null
+									else
+										cb utils.wrapError 'Error while creating directory ' + dir, e
 								else
 									reporter.directoryCreated dir
 									cb null # Directory successfully created

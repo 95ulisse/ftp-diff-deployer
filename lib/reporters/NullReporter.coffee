@@ -7,6 +7,7 @@ module.exports = class NullReporter
 	authenticated: noop
 	diffStarted: noop
 	diffFinished: noop
+	directoryExists: noop
 	directoryCreated: noop
 	uploadStarted: noop
 	uploadProgress: noop

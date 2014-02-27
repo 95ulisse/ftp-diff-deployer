@@ -31,6 +31,9 @@ module.exports = class SimpleReporter
 	diffFinished: (diff) ->
 		@ok "Got diff: #{_.keys(diff.new).length.toString().green} #{_.keys(diff.modified).length.toString().cyan} #{_.keys(diff.removed).length.toString().red}"
 
+	directoryExists: (path) ->
+		@ok "Remote directory already exists: #{path.yellow}"
+
 	directoryCreated: (path) ->
 		@ok "Remote directory created: #{path.yellow}"
 
