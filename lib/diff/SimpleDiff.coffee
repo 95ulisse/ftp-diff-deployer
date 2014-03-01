@@ -57,7 +57,13 @@ module.exports = class SimpleDiff
 						delete memory[dir][f]
 		for dir, files of memory # What's left are the removed files
 			for f, h of files
-				diff.removed[path.join dir, f] = h
+				isExcluded = false
+				if @options.exclude?.length > 0
+					for pattern in @options.exclude
+						if minimatch path.join(dir, f), pattern, { matchBase: true }
+							isExcluded = true
+							break
+				diff.removed[path.join dir, f] = h if not isExcluded
 
 		# Calls the callback with the computed diff
 		done null, diff

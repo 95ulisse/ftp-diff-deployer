@@ -26,15 +26,15 @@ describe 'SimpleDiff test', () ->
 
 	it 'Throws for a non-existent source path', () ->
 		(() ->
-			newSimpleDiff()
+			newSimpleDiff null, memory: root + 'memory'
 		).should.throw()
 
 		(() ->
-			newSimpleDiff null, src: ''
+			newSimpleDiff null, src: '', memory: root + 'memory'
 		).should.throw()
 
 		(() ->
-			newSimpleDiff null, { src: '/non/existent/path' }
+			newSimpleDiff null, src: '/non/existent/path', memory: root + 'memory'
 		).should.throw()
 
 
