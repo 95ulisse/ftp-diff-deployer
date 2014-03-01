@@ -20,7 +20,7 @@ newSimpleDiff = (fs, options) ->
 		Utils.__set__ 'fs', fs
 	SimpleDiff = utils.require 'diff/SimpleDiff'
 	SimpleDiff.__set__ 'utils', Utils
-	return new SimpleDiff options || { src: root + 'www', memory: root + 'memory' }
+	return new SimpleDiff { options: options || { src: root + 'www', memory: root + 'memory' } }
 
 describe 'SimpleDiff test', () ->
 
@@ -30,7 +30,7 @@ describe 'SimpleDiff test', () ->
 		).should.throw()
 
 		(() ->
-			newSimpleDiff src: ''
+			newSimpleDiff null, src: ''
 		).should.throw()
 
 		(() ->

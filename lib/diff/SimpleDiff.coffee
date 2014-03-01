@@ -6,7 +6,8 @@ utils = require '../utils'
 
 module.exports = class SimpleDiff
 
-	constructor: (@options = {}) ->
+	constructor: (diffDeployer) ->
+		@options = options = diffDeployer.options
 		if not options.src
 			throw new Error "'src' option is required"
 		if not utils.file.exists options.src

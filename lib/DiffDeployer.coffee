@@ -4,6 +4,13 @@ Path = require 'path'
 _ = require 'lodash'
 utils = require './utils'
 
+diffStringMap =
+	'simple': require './diff/SimpleDiff'
+
+reporterStringMap =
+	'simple': require './reporters/SimpleReporter'
+	'null': require './reporters/NullReporter'
+
 normalizeFtpPath = (path) ->
 	path.split(Path.sep).join '/'
 
@@ -16,15 +23,24 @@ module.exports = class DiffDeployer
 			throw new Error "'auth' parameter is required"
 		if not options.host
 			throw new Error "'host' parameter is required"
-		if not options.diff
-			throw new Error "'diff' parameter is required"
 		if not options.src
 			throw new Error "'src' parameter is required"
 		if not options.dest
 			throw new Error "'dest' parameter is required"
 
-		# Defaults
-		options.reporter ||= new(require './reporters/NullReporter')
+		# Checks for diff
+		options.diff ||= 'simple'
+		if typeof options.diff == 'string'
+			throw new Error "Cannot find '#{options.diff}' diff" if not diffStringMap[options.diff]
+			options.diff = new( diffStringMap[options.diff] )(this)
+
+		# Checks for reporter
+		options.reporter ||= 'simple'
+		if typeof options.reporter == 'string'
+			throw new Error "Cannot find '#{options.reporter}' reporter" if not reporterStringMap[options.reporter]
+			options.reporter = new( reporterStringMap[options.reporter] )(this)
+
+		# Default number of attempts
 		options.retry ||= 3
 
 	deploy: (done) ->
