@@ -1,6 +1,6 @@
 # ftp-diff-deployer
 
-> Incrementally push differences to FTP server.
+> Incrementally push differences to your FTP server.
 
 `ftp-diff-deployer` is a tiny library written in [CoffeeScript](http://coffeescript.org/) that uploads only the files you've changed to your FTP server. Before uploading your files, it compares the actual files with the snapshot of the last upload: this means that the first time it's run, it will upload everything, but the subsequent times it will upload only what you've changed.
 
