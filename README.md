@@ -107,7 +107,7 @@ Tu run the tests, issue from the root of the project:
 grunt test
 ```
 
-The tests are written with [mocha](http://visionmedia.github.io/mocha/) and [should.js](https://github.com/visionmedia/should.js).
+The tests are written with [mocha](http://mochajs.org/) and [should.js](https://github.com/visionmedia/should.js).
 
 ## Special notes
 
